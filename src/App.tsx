@@ -7,9 +7,27 @@ type Company = {
 
 type CompaniesTableProps = {
   companies: Company[];
+  totalRecords: number;
+  numberOfPages: number;
 };
 
-const CompaniesTable: React.FC<CompaniesTableProps> = ({ companies }) => (
+type PaginationProps = {
+  numberOfPages: number;
+};
+
+const Pagination: React.FC<PaginationProps> = ({ numberOfPages }) => (
+  <>
+    {Array.from({ length: numberOfPages }).map((_, i) => (
+      <button>{i + 1}</button>
+    ))}
+  </>
+);
+
+const CompaniesTable: React.FC<CompaniesTableProps> = ({
+  companies,
+  totalRecords,
+  numberOfPages,
+}) => (
   <>
     <table>
       <tr>
@@ -24,23 +42,24 @@ const CompaniesTable: React.FC<CompaniesTableProps> = ({ companies }) => (
         </tr>
       ))}
     </table>
-    <button>1</button>
-    <button>2</button>
-    <button>...</button>
-    <button>3309</button>
-    <button>Next page</button>
+    <Pagination numberOfPages={numberOfPages} />
+    <p>Total records: {totalRecords}</p>
   </>
 );
 
 export function App() {
   const [companies, setCompanies] = useState<Company[]>([]);
+  const [totalRecords, setTotalRecords] = useState<number>(0);
+  const [numberOfPages, setNumberOfPages] = useState<number>(0);
+
+  const SIZE = 100;
 
   useEffect(() => {
     const payload = {
       id: 1,
       no_result_if_limit: false,
       offset: 0,
-      size: 12,
+      size: SIZE,
       state: "read",
       rules: JSON.stringify([
         ["order_by", "market_cap", "desc"],
@@ -66,9 +85,19 @@ export function App() {
       .then((jsonResponse) => {
         console.log(jsonResponse);
         setCompanies(jsonResponse.data);
+
+        const totalRecords = jsonResponse.meta.total_records;
+        setTotalRecords(totalRecords);
+        setNumberOfPages(Math.ceil(totalRecords / SIZE));
       })
       .catch((error) => console.log(error));
   }, []);
 
-  return <CompaniesTable companies={companies} />;
+  return (
+    <CompaniesTable
+      companies={companies}
+      totalRecords={totalRecords}
+      numberOfPages={numberOfPages}
+    />
+  );
 }
