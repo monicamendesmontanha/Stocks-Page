@@ -7,27 +7,37 @@ type Company = {
 
 type CompaniesTableProps = {
   companies: Company[];
-  totalRecords: number;
-  numberOfPages: number;
 };
 
 type PaginationProps = {
   numberOfPages: number;
+  currentPage: number;
+  onPageSelected: (page: number) => void;
 };
 
-const Pagination: React.FC<PaginationProps> = ({ numberOfPages }) => (
+const Pagination: React.FC<PaginationProps> = ({
+  numberOfPages,
+  currentPage,
+  onPageSelected,
+}) => (
   <>
-    {Array.from({ length: numberOfPages }).map((_, i) => (
-      <button>{i + 1}</button>
-    ))}
+    {Array.from({ length: numberOfPages }).map((_, index) => {
+      const page = index + 1;
+
+      return (
+        <button
+          key={page}
+          disabled={page === currentPage}
+          onClick={() => onPageSelected(page)}
+        >
+          {page}
+        </button>
+      );
+    })}
   </>
 );
 
-const CompaniesTable: React.FC<CompaniesTableProps> = ({
-  companies,
-  totalRecords,
-  numberOfPages,
-}) => (
+const CompaniesTable: React.FC<CompaniesTableProps> = ({ companies }) => (
   <>
     <table>
       <tr>
@@ -42,8 +52,6 @@ const CompaniesTable: React.FC<CompaniesTableProps> = ({
         </tr>
       ))}
     </table>
-    <Pagination numberOfPages={numberOfPages} />
-    <p>Total records: {totalRecords}</p>
   </>
 );
 
@@ -51,14 +59,23 @@ export function App() {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [totalRecords, setTotalRecords] = useState<number>(0);
   const [numberOfPages, setNumberOfPages] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [offset, setOffset] = useState<number>(0);
 
-  const SIZE = 100;
+  const SIZE = 12;
+
+  const handlePagination = (selectedPage: number) => {
+    setCurrentPage(selectedPage);
+
+    const newOffset = selectedPage * SIZE - SIZE;
+    setOffset(newOffset);
+  };
 
   useEffect(() => {
     const payload = {
       id: 1,
       no_result_if_limit: false,
-      offset: 0,
+      offset,
       size: SIZE,
       state: "read",
       rules: JSON.stringify([
@@ -91,13 +108,17 @@ export function App() {
         setNumberOfPages(Math.ceil(totalRecords / SIZE));
       })
       .catch((error) => console.log(error));
-  }, []);
+  }, [offset]);
 
   return (
-    <CompaniesTable
-      companies={companies}
-      totalRecords={totalRecords}
-      numberOfPages={numberOfPages}
-    />
+    <>
+      <p>Total records: {totalRecords}</p>
+      <CompaniesTable companies={companies} />
+      <Pagination
+        numberOfPages={numberOfPages}
+        currentPage={currentPage}
+        onPageSelected={handlePagination}
+      />
+    </>
   );
 }
