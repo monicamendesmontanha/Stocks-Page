@@ -9,34 +9,6 @@ type CompaniesTableProps = {
   companies: Company[];
 };
 
-type PaginationProps = {
-  numberOfPages: number;
-  currentPage: number;
-  onPageSelected: (page: number) => void;
-};
-
-const Pagination: React.FC<PaginationProps> = ({
-  numberOfPages,
-  currentPage,
-  onPageSelected,
-}) => (
-  <>
-    {Array.from({ length: numberOfPages }).map((_, index) => {
-      const page = index + 1;
-
-      return (
-        <button
-          key={page}
-          disabled={page === currentPage}
-          onClick={() => onPageSelected(page)}
-        >
-          {page}
-        </button>
-      );
-    })}
-  </>
-);
-
 const CompaniesTable: React.FC<CompaniesTableProps> = ({ companies }) => (
   <>
     <table>
@@ -58,20 +30,39 @@ const CompaniesTable: React.FC<CompaniesTableProps> = ({ companies }) => (
 export function App() {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [totalRecords, setTotalRecords] = useState<number>(0);
+  const [offset, setOffset] = useState<number>(0);
   const [numberOfPages, setNumberOfPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [offset, setOffset] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const SIZE = 12;
+  const SIZE = 100;
 
-  const handlePagination = (selectedPage: number) => {
-    setCurrentPage(selectedPage);
+  const handleScroll = () => {
+    if (
+      window.innerHeight + document.documentElement.scrollTop !==
+        document.documentElement.offsetHeight ||
+      isLoading
+    ) {
+      return;
+    }
 
-    const newOffset = selectedPage * SIZE - SIZE;
-    setOffset(newOffset);
+    const nextPage = currentPage + 1;
+    if (nextPage > numberOfPages) {
+      return;
+    }
+
+    setCurrentPage(nextPage);
+    setOffset(nextPage * SIZE - SIZE);
   };
 
   useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isLoading]);
+
+  useEffect(() => {
+    setIsLoading(true);
+
     const payload = {
       id: 1,
       no_result_if_limit: false,
@@ -97,15 +88,20 @@ export function App() {
       body: JSON.stringify(payload),
     };
 
-    fetch("https://simplywall.st/api/grid/filter?include=grid,score", options)
+    const response = fetch(
+      "https://simplywall.st/api/grid/filter?include=grid,score",
+      options
+    )
       .then((response) => response.json())
       .then((jsonResponse) => {
         console.log(jsonResponse);
-        setCompanies(jsonResponse.data);
+        setCompanies([...companies, ...jsonResponse.data]);
 
         const totalRecords = jsonResponse.meta.total_records;
         setTotalRecords(totalRecords);
         setNumberOfPages(Math.ceil(totalRecords / SIZE));
+
+        setIsLoading(false);
       })
       .catch((error) => console.log(error));
   }, [offset]);
@@ -114,11 +110,6 @@ export function App() {
     <>
       <p>Total records: {totalRecords}</p>
       <CompaniesTable companies={companies} />
-      <Pagination
-        numberOfPages={numberOfPages}
-        currentPage={currentPage}
-        onPageSelected={handlePagination}
-      />
     </>
   );
 }
