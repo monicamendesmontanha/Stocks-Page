@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import CountryOptions from "./CountryOptions";
 
 type Company = {
   id: number;
@@ -28,6 +29,7 @@ const CompaniesTable: React.FC<CompaniesTableProps> = ({ companies }) => (
 );
 
 export function App() {
+  const [selectedCountryId, setSelectedCountryId] = useState<string>("au");
   const [companies, setCompanies] = useState<Company[]>([]);
   const [totalRecords, setTotalRecords] = useState<number>(0);
   const [offset, setOffset] = useState<number>(0);
@@ -55,6 +57,19 @@ export function App() {
     setOffset(nextPage * SIZE - SIZE);
   };
 
+  const resetData = () => {
+    setCompanies([]);
+    setTotalRecords(0);
+    setNumberOfPages(0);
+    setCurrentPage(1);
+    setOffset(0);
+  };
+
+  const handleSelectCountry = (countryId: string) => {
+    setSelectedCountryId(countryId);
+    resetData();
+  };
+
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -62,6 +77,11 @@ export function App() {
 
   useEffect(() => {
     setIsLoading(true);
+
+    const countryFilter =
+      selectedCountryId === "global"
+        ? null
+        : [["country_name", "in", [selectedCountryId]]];
 
     const payload = {
       id: 1,
@@ -75,7 +95,7 @@ export function App() {
         ["market_cap", "is_not_null"],
         ["primary_flag", "=", true],
         ["is_fund", "=", false],
-        ["aor", [["country_name", "in", ["ca"]]]],
+        ["aor", countryFilter],
       ]),
     };
 
@@ -88,10 +108,7 @@ export function App() {
       body: JSON.stringify(payload),
     };
 
-    const response = fetch(
-      "https://simplywall.st/api/grid/filter?include=grid,score",
-      options
-    )
+    fetch("https://simplywall.st/api/grid/filter?include=grid,score", options)
       .then((response) => response.json())
       .then((jsonResponse) => {
         console.log(jsonResponse);
@@ -104,11 +121,15 @@ export function App() {
         setIsLoading(false);
       })
       .catch((error) => console.log(error));
-  }, [offset]);
+  }, [offset, selectedCountryId]);
 
   return (
     <>
       <p>Total records: {totalRecords}</p>
+      <CountryOptions
+        selectedCountryId={selectedCountryId}
+        onCountrySelected={handleSelectCountry}
+      />
       <CompaniesTable companies={companies} />
     </>
   );
