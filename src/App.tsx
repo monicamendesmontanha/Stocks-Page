@@ -1,32 +1,6 @@
 import React, { useState, useEffect } from "react";
 import CountryOptions from "./CountryOptions";
-
-type Company = {
-  id: number;
-  name: string;
-};
-
-type CompaniesTableProps = {
-  companies: Company[];
-};
-
-const CompaniesTable: React.FC<CompaniesTableProps> = ({ companies }) => (
-  <>
-    <table>
-      <tr>
-        <th>Company Name</th>
-        <th>Unique Symbol</th>
-        <th>Snowflake Score</th>
-        <th>Market Cap</th>
-      </tr>
-      {companies.map((company) => (
-        <tr key={company.id}>
-          <td>{company.name}</td>
-        </tr>
-      ))}
-    </table>
-  </>
-);
+import CompanTiles, { Company } from "./CompanyTiles";
 
 export function App() {
   const [selectedCountryId, setSelectedCountryId] = useState<string>("au");
@@ -130,7 +104,7 @@ export function App() {
         selectedCountryId={selectedCountryId}
         onCountrySelected={handleSelectCountry}
       />
-      <CompaniesTable companies={companies} />
+      <CompanTiles companies={companies} />
     </>
   );
 }
