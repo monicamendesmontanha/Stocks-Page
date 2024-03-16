@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import CountryOptions from "./CountryOptions";
-import SortingOptions from "./SortingOptions";
+import Dropdown from "./Dropdown";
+import countryOptions from "./countryOptions";
+import sortingCriteriaOptions from "./sortingCriteriaOptions";
 import CompanTiles, { Company } from "./CompanyTiles";
 
 export function App() {
@@ -42,8 +43,8 @@ export function App() {
     setOffset(0);
   };
 
-  const handleSelectCountry = (countryId: string) => {
-    setSelectedCountryId(countryId);
+  const handleSelectCountry = (value: string) => {
+    setSelectedCountryId(value);
     resetData();
   };
 
@@ -108,11 +109,13 @@ export function App() {
   return (
     <>
       <p>{totalRecords} companies</p>
-      <CountryOptions
-        selectedCountryId={selectedCountryId}
-        onCountrySelected={handleSelectCountry}
+      <Dropdown
+        options={countryOptions}
+        valueSelected={selectedCountryId}
+        onValueChange={handleSelectCountry}
       />
-      <SortingOptions
+      <Dropdown
+        options={sortingCriteriaOptions}
         valueSelected={selectedSortingCriteria}
         onValueChange={handleSelectSortingCriteria}
       />

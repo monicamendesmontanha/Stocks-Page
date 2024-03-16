@@ -1,27 +1,17 @@
 import React from "react";
 
-type Option = {
+export type Option = {
   value: string;
   label: string;
 };
 
-const options: Option[] = [
-  {
-    value: "desc",
-    label: "Market Cap High to Low",
-  },
-  {
-    value: "asc",
-    label: "Market Cap Low to High",
-  },
-];
-
 type Props = {
+  options: Option[];
   valueSelected: string;
   onValueChange: (value: string) => void;
 };
 
-const SortingOptions: React.FC<Props> = ({ valueSelected, onValueChange }) => (
+const Dropdown: React.FC<Props> = ({ options, valueSelected, onValueChange }) => (
   <select value={valueSelected} onChange={(e) => onValueChange(e.target.value)}>
     {options.map((option) => (
       <option key={option.value} value={option.value}>
@@ -31,4 +21,4 @@ const SortingOptions: React.FC<Props> = ({ valueSelected, onValueChange }) => (
   </select>
 );
 
-export default SortingOptions;
+export default Dropdown;
