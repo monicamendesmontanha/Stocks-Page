@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import CountryOptions from "./CountryOptions";
+import SortingOptions from "./SortingOptions";
 import CompanTiles, { Company } from "./CompanyTiles";
 
 export function App() {
   const [selectedCountryId, setSelectedCountryId] = useState<string>("au");
+  const [selectedSortingCriteria, setSelectedSortingCriteria] =
+    useState<string>("desc");
   const [companies, setCompanies] = useState<Company[]>([]);
   const [totalRecords, setTotalRecords] = useState<number>(0);
   const [offset, setOffset] = useState<number>(0);
@@ -44,6 +47,11 @@ export function App() {
     resetData();
   };
 
+  const handleSelectSortingCriteria = (value: string) => {
+    setSelectedSortingCriteria(value);
+    resetData();
+  };
+
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -64,7 +72,7 @@ export function App() {
       size: SIZE,
       state: "read",
       rules: JSON.stringify([
-        ["order_by", "market_cap", "desc"],
+        ["order_by", "market_cap", selectedSortingCriteria],
         ["grid_visible_flag", "=", true],
         ["market_cap", "is_not_null"],
         ["primary_flag", "=", true],
@@ -95,14 +103,18 @@ export function App() {
         setIsLoading(false);
       })
       .catch((error) => console.log(error));
-  }, [offset, selectedCountryId]);
+  }, [offset, selectedCountryId, selectedSortingCriteria]);
 
   return (
     <>
-      <p>Total records: {totalRecords}</p>
+      <p>{totalRecords} companies</p>
       <CountryOptions
         selectedCountryId={selectedCountryId}
         onCountrySelected={handleSelectCountry}
+      />
+      <SortingOptions
+        valueSelected={selectedSortingCriteria}
+        onValueChange={handleSelectSortingCriteria}
       />
       <CompanTiles companies={companies} />
     </>
