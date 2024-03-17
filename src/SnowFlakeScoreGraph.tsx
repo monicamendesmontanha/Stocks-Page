@@ -5,6 +5,7 @@ import {
   PolarGrid,
   PolarAngleAxis,
   PolarRadiusAxis,
+  ResponsiveContainer,
 } from "recharts";
 
 export type SnowFakeScore = {
@@ -29,12 +30,20 @@ const SnowFlakeScoreGraph: React.FC<Props> = ({ snowFlakeScore }) => {
   ];
 
   return (
-    <RadarChart outerRadius={90} width={730} height={250} data={data}>
-      <PolarGrid />
-      <PolarAngleAxis dataKey="label" />
-      <PolarRadiusAxis tick={false} />
-      <Radar dataKey="value" stroke="yellow" fill="yellow" fillOpacity={0.5} />
-    </RadarChart>
+    <ResponsiveContainer>
+      <RadarChart data={data}>
+        <PolarGrid />
+        <PolarAngleAxis dataKey="label" tick={false} />
+        <PolarRadiusAxis tick={false} />
+        <Radar
+          dataKey="value"
+          stroke="yellow"
+          fill="yellow"
+          fillOpacity={0.5}
+          isAnimationActive={false}
+        />
+      </RadarChart>
+    </ResponsiveContainer>
   );
 };
 

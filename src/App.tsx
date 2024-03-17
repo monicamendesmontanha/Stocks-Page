@@ -3,12 +3,11 @@ import Dropdown from "./Dropdown";
 import countryOptions from "./countryOptions";
 import sortingCriteriaOptions from "./sortingCriteriaOptions";
 import CompanTiles, { Company } from "./CompanyTiles";
-import "./styles.css";
 
 type APIData = {
   id: number;
   name: string;
-  unique_symbol: string;
+  ticker_symbol: string;
   score: {
     data: {
       value: number;
@@ -122,7 +121,7 @@ export function App() {
             return {
               id: d.id,
               name: d.name,
-              uniqueSymbol: d.unique_symbol,
+              tickerSymbol: d.ticker_symbol,
               marketCap: d.grid.data.market_cap,
               snowFlakeScore: {
                 value: d.score.data.value,
@@ -154,12 +153,12 @@ export function App() {
           options={countryOptions}
           valueSelected={selectedCountryId}
           onValueChange={handleSelectCountry}
-          />
+        />
         <Dropdown
           options={sortingCriteriaOptions}
           valueSelected={selectedSortingCriteria}
           onValueChange={handleSelectSortingCriteria}
-          />
+        />
       </section>
       <CompanTiles companies={companies} />
     </>

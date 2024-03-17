@@ -1,5 +1,4 @@
 import React from "react";
-import "./styles.css";
 import SnowFlakeScoreGraph, { SnowFakeScore } from "./SnowFlakeScoreGraph";
 
 export type Company = {
@@ -15,30 +14,27 @@ type Props = {
 };
 
 const CompanTiles: React.FC<Props> = ({ companies }) => (
-  <>
+  <div className="companyTableContainer">
     <table>
-      <tr className="thead">
-        <th></th>
-        <div>
-          <th></th>
-          <th>Company</th>
-        </div>
+      <tr>
+        <th className="companySnowFlakeScoreHeader"></th>
+        <th className="companyDetailsHeader">Company</th>
         <th>Market Cap</th>
       </tr>
       {companies.map((company) => (
         <tr key={company.id}>
-          <td>
+          <td className="companySnowFlakeScoreContainer">
             <SnowFlakeScoreGraph snowFlakeScore={company.snowFlakeScore} />
           </td>
-          <td className="company">
-            <div className="companySymbol">{company.uniqueSymbol}</div>
-            <div className="companyName">{company.name}</div>
+          <td className="companyDetails">
+            <div className="tickerSymbol">{company.tickerSymbol}</div>
+            <div>{company.name}</div>
           </td>
           <td>{company.marketCap}</td>
         </tr>
       ))}
     </table>
-  </>
+  </div>
 );
 
 export default CompanTiles;
