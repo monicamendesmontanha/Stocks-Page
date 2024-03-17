@@ -3,7 +3,7 @@ import Dropdown from "./Dropdown";
 import countryOptions from "./countryOptions";
 import sortingCriteriaOptions from "./sortingCriteriaOptions";
 import CompanTiles, { Company } from "./CompanyTiles";
-import './styles.css';
+import "./styles.css";
 
 type APIData = {
   id: number;
