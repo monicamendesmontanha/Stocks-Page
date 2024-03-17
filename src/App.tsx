@@ -4,6 +4,26 @@ import countryOptions from "./countryOptions";
 import sortingCriteriaOptions from "./sortingCriteriaOptions";
 import CompanTiles, { Company } from "./CompanyTiles";
 
+type APIData = {
+  id: number;
+  name: string;
+  unique_symbol: string;
+  score: {
+    data: {
+      value: number;
+      income: number;
+      health: number;
+      past: number;
+      future: number;
+    };
+  };
+  grid: {
+    data: {
+      market_cap: number;
+    };
+  };
+};
+
 export function App() {
   const [selectedCountryId, setSelectedCountryId] = useState<string>("au");
   const [selectedSortingCriteria, setSelectedSortingCriteria] =
@@ -95,7 +115,26 @@ export function App() {
       .then((response) => response.json())
       .then((jsonResponse) => {
         console.log(jsonResponse);
-        setCompanies([...companies, ...jsonResponse.data]);
+
+        const companiesFromResponse: Company[] = jsonResponse.data.map(
+          (d: APIData) => {
+            return {
+              id: d.id,
+              name: d.name,
+              uniqueSymbol: d.unique_symbol,
+              marketCap: d.grid.data.market_cap,
+              snowFlakeScore: {
+                value: d.score.data.value,
+                income: d.score.data.income,
+                health: d.score.data.health,
+                past: d.score.data.past,
+                future: d.score.data.future,
+              },
+            };
+          }
+        );
+
+        setCompanies([...companies, ...companiesFromResponse]);
 
         const totalRecords = jsonResponse.meta.total_records;
         setTotalRecords(totalRecords);
