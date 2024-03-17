@@ -1,4 +1,5 @@
 import React from "react";
+import './styles.css';
 
 export type Option = {
   value: string;
@@ -12,7 +13,7 @@ type Props = {
 };
 
 const Dropdown: React.FC<Props> = ({ options, valueSelected, onValueChange }) => (
-  <select value={valueSelected} onChange={(e) => onValueChange(e.target.value)}>
+  <select className="dropdown" value={valueSelected} onChange={(e) => onValueChange(e.target.value)}>
     {options.map((option) => (
       <option key={option.value} value={option.value}>
         {option.label}

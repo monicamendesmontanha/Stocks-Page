@@ -3,6 +3,7 @@ import Dropdown from "./Dropdown";
 import countryOptions from "./countryOptions";
 import sortingCriteriaOptions from "./sortingCriteriaOptions";
 import CompanTiles, { Company } from "./CompanyTiles";
+import './styles.css';
 
 type APIData = {
   id: number;
@@ -148,16 +149,18 @@ export function App() {
   return (
     <>
       <p>{totalRecords} companies</p>
-      <Dropdown
-        options={countryOptions}
-        valueSelected={selectedCountryId}
-        onValueChange={handleSelectCountry}
-      />
-      <Dropdown
-        options={sortingCriteriaOptions}
-        valueSelected={selectedSortingCriteria}
-        onValueChange={handleSelectSortingCriteria}
-      />
+      <section className="section">
+        <Dropdown
+          options={countryOptions}
+          valueSelected={selectedCountryId}
+          onValueChange={handleSelectCountry}
+          />
+        <Dropdown
+          options={sortingCriteriaOptions}
+          valueSelected={selectedSortingCriteria}
+          onValueChange={handleSelectSortingCriteria}
+          />
+      </section>
       <CompanTiles companies={companies} />
     </>
   );

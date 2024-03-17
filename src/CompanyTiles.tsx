@@ -1,4 +1,5 @@
 import React from "react";
+import './styles.css';
 
 type SnowFakeScore = {
   value: number;
@@ -36,18 +37,23 @@ type Props = {
 const CompanTiles: React.FC<Props> = ({ companies }) => (
   <>
     <table>
-      <tr>
-        <th>Company Name</th>
-        <th>Unique Symbol</th>
+      <tr className="thead">
+        <th></th>
+        <div>
+          <th></th>
+          <th>Company</th>
+        </div>
         <th>Market Cap</th>
       </tr>
       {companies.map((company) => (
         <tr key={company.id}>
-          <td>
-            <SnowFlakeScoreGraph snowFlakeScore={company.snowFlakeScore} />
-            <span>{company.name}</span>
+             <td>
+              <SnowFlakeScoreGraph snowFlakeScore={company.snowFlakeScore} />
+              </td>
+          <td className="company">
+            <div className="companySymbol">{company.uniqueSymbol}</div>
+            <div className="companyName">{company.name}</div>
           </td>
-          <td>{company.uniqueSymbol}</td>
           <td>{company.marketCap}</td>
         </tr>
       ))}
