@@ -1,13 +1,15 @@
 import React from "react";
+import { vi, describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import CompanyTiles from "./CompanyTiles";
 
-import ResizeObserver from "resize-observer-polyfill";
-global.ResizeObserver = ResizeObserver;
+const ResizeObserverMock = vi.fn(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn()
+}))
 
-jest.mock("./SnowFlakeScoreGraph", () => {
-  return () => <div />;
-});
+vi.stubGlobal('ResizeObserver', ResizeObserverMock)
 
 describe("CompanyTiles", () => {
   it("renders headers", () => {

@@ -29,7 +29,7 @@ const convertValueToCurrency = (
 };
 
 const CompanTiles: React.FC<Props> = ({ companies, countryId }) => (
-  <div className="companyTableContainer">
+  <div className="companyTableContainer" data-testid="company-tiles">
     <table>
       <thead>
         <tr>
