@@ -3,6 +3,8 @@ import { vi, describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import CompanyTiles from "./CompanyTiles";
 
+// This is a workaround for the error "ResizeObserver is not defined"
+// Found a solution on https://github.com/ZeeCoder/use-resize-observer/issues/40#issuecomment-1521748205
 const ResizeObserverMock = vi.fn(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),
