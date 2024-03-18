@@ -27,18 +27,29 @@ type APIData = {
   };
 };
 
-export function StockPage() {
-  const [selectedCountryId, setSelectedCountryId] = useState<string>("au");
-  const [selectedSortingCriteria, setSelectedSortingCriteria] =
-    useState<string>("desc");
-  const [companies, setCompanies] = useState<Company[]>([]);
-  const [totalRecords, setTotalRecords] = useState<number>(0);
-  const [offset, setOffset] = useState<number>(0);
-  const [numberOfPages, setNumberOfPages] = useState<number>(0);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [isLoading, setIsLoading] = useState(false);
+const SIZE = 100;
+const INITIAL_COUNTRY_ID = "au";
+const INITIAL_SORTING_CRITERIA = "desc";
+const INITIAL_TOTAL_RECORDS = 0;
+const INITIAL_OFFSET = 0;
+const INITIAL_NUMBER_OF_PAGES = 0;
+const INITIAL_CURRENT_PAGE = 1;
 
-  const SIZE = 100;
+export const StockPage: React.FC = () => {
+  const [selectedCountryId, setSelectedCountryId] =
+    useState<string>(INITIAL_COUNTRY_ID);
+  const [selectedSortingCriteria, setSelectedSortingCriteria] =
+    useState<string>(INITIAL_SORTING_CRITERIA);
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [totalRecords, setTotalRecords] = useState<number>(
+    INITIAL_TOTAL_RECORDS
+  );
+  const [offset, setOffset] = useState<number>(INITIAL_OFFSET);
+  const [numberOfPages, setNumberOfPages] = useState<number>(
+    INITIAL_NUMBER_OF_PAGES
+  );
+  const [currentPage, setCurrentPage] = useState<number>(INITIAL_CURRENT_PAGE);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleScroll = () => {
     if (
@@ -60,10 +71,10 @@ export function StockPage() {
 
   const resetData = () => {
     setCompanies([]);
-    setTotalRecords(0);
-    setNumberOfPages(0);
-    setCurrentPage(1);
-    setOffset(0);
+    setTotalRecords(INITIAL_TOTAL_RECORDS);
+    setNumberOfPages(INITIAL_NUMBER_OF_PAGES);
+    setCurrentPage(INITIAL_CURRENT_PAGE);
+    setOffset(INITIAL_OFFSET);
   };
 
   const handleSelectCountry = (value: string) => {
@@ -117,7 +128,6 @@ export function StockPage() {
     fetch("https://simplywall.st/api/grid/filter?include=grid,score", options)
       .then((response) => response.json())
       .then((jsonResponse) => {
-
         const companiesFromResponse: Company[] = jsonResponse.data.map(
           (d: APIData) => {
             return {
@@ -170,4 +180,4 @@ export function StockPage() {
       <CompanyTiles companies={companies} countryId={selectedCountryId} />
     </>
   );
-}
+};
