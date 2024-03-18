@@ -6,14 +6,29 @@ export type Company = {
   name: string;
   tickerSymbol: string;
   marketCap: number;
+  marketCapCurrencySymbol: string;
   snowFlakeScore: SnowFakeScore;
 };
 
 type Props = {
   companies: Company[];
+  countryId: string;
 };
 
-const CompanTiles: React.FC<Props> = ({ companies }) => (
+const convertValueToCurrency = (
+  value: number,
+  countryId: string,
+  currencySymbol: string
+) => {
+  const formattedValue = new Intl.NumberFormat(countryId, {
+    notation: "compact",
+    maximumSignificantDigits: 4,
+  }).format(value);
+
+  return `${currencySymbol}${formattedValue.toLocaleLowerCase()}`;
+};
+
+const CompanTiles: React.FC<Props> = ({ companies, countryId }) => (
   <div className="companyTableContainer">
     <table>
       <tr>
@@ -30,7 +45,13 @@ const CompanTiles: React.FC<Props> = ({ companies }) => (
             <div className="tickerSymbol">{company.tickerSymbol}</div>
             <div className="companyName">{company.name}</div>
           </td>
-          <td>{company.marketCap}</td>
+          <td>
+            {convertValueToCurrency(
+              company.marketCap,
+              countryId,
+              company.marketCapCurrencySymbol
+            )}
+          </td>
         </tr>
       ))}
     </table>

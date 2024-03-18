@@ -20,6 +20,9 @@ type APIData = {
   grid: {
     data: {
       market_cap: number;
+      currency_info: {
+        primary_trading_item_currency_symbol: string;
+      };
     };
   };
 };
@@ -123,6 +126,8 @@ export function App() {
               name: d.name,
               tickerSymbol: d.ticker_symbol,
               marketCap: d.grid.data.market_cap,
+              marketCapCurrencySymbol:
+                d.grid.data.currency_info.primary_trading_item_currency_symbol,
               snowFlakeScore: {
                 value: d.score.data.value,
                 income: d.score.data.income,
@@ -163,7 +168,7 @@ export function App() {
           onValueChange={handleSelectSortingCriteria}
         />
       </section>
-      <CompanTiles companies={companies} />
+      <CompanTiles companies={companies} countryId={selectedCountryId} />
     </>
   );
 }
