@@ -147,7 +147,10 @@ export function App() {
 
   return (
     <>
-      <p>{totalRecords} companies</p>
+      <header className="header">
+        <h1>Largest Stocks by Market Cap</h1>
+        <p className="subtitle">{totalRecords} companies</p>
+      </header>
       <section className="section">
         <Dropdown
           options={countryOptions}

@@ -19,7 +19,7 @@ const CompanTiles: React.FC<Props> = ({ companies }) => (
       <tr>
         <th className="companySnowFlakeScoreHeader"></th>
         <th className="companyDetailsHeader">Company</th>
-        <th>Market Cap</th>
+        <th className="marketCapDetailsHeader">Market Cap</th>
       </tr>
       {companies.map((company) => (
         <tr key={company.id}>
@@ -28,7 +28,7 @@ const CompanTiles: React.FC<Props> = ({ companies }) => (
           </td>
           <td className="companyDetails">
             <div className="tickerSymbol">{company.tickerSymbol}</div>
-            <div>{company.name}</div>
+            <div className="companyName">{company.name}</div>
           </td>
           <td>{company.marketCap}</td>
         </tr>

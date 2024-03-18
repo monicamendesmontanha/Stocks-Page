@@ -12,14 +12,25 @@ body {
   justify-content: center;
 }
 
+/*----------------------header------------------------*/
+
+.header {
+  text-align: center;
+}
+
+.subtitle {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/*----------------------section------------------------*/
+
 .section {
   position: sticky;
   top: 0;
   background-color: rgb(21, 27, 36);
   z-index: 999;
   margin: 1.5rem 0rem;
-  padding-top: 2rem;
-  padding-bottom: 2rem;
+  padding: 2rem 0;
 
   :first-child {
     margin-right: 24px;
@@ -39,9 +50,12 @@ body {
   cursor: pointer;
 }
 
+/*----------------------table------------------------*/
+
 .companyTableContainer tr {
   display: flex;
-  padding-bottom: 2rem;
+  padding: 1rem 0;
+  border-top:  0.015rem solid rgba(255, 255, 255, 0.1);
 }
 
 .companySnowFlakeScoreHeader, .companySnowFlakeScoreContainer {
@@ -55,15 +69,25 @@ body {
   text-align: left;
 }
 
+.companyDetailsHeader,
+.marketCapDetailsHeader {
+  color: rgba(255, 255, 255, 0.5);
+}
+
 .companyDetails {
-  border-bottom: 0.125rem dotted rgb(35, 148, 223);
-  font-size: 0.75rem;;
+  font-size: 0.75rem;
 }
 
 .tickerSymbol {
   color: rgb(35, 148, 223);
-  font-size: 1.25rem;;
+  font-size: 1.25rem;
 }
+
+.companyName {
+  border-bottom: 0.05rem dotted rgb(35, 148, 223);
+}
+
+/*----------------------responsiveness------------------------*/
 
 @media only screen and (max-width: 600px) {
   .section {
