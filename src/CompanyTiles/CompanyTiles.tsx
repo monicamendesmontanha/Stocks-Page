@@ -28,7 +28,7 @@ const convertValueToCurrency = (
   return `${currencySymbol}${formattedValue.toLocaleLowerCase()}`;
 };
 
-const CompanTiles: React.FC<Props> = ({ companies, countryId }) => (
+const CompanyTiles: React.FC<Props> = ({ companies, countryId }) => (
   <div className="companyTableContainer" data-testid="company-tiles">
     <table>
       <thead>
@@ -62,4 +62,4 @@ const CompanTiles: React.FC<Props> = ({ companies, countryId }) => (
   </div>
 );
 
-export default CompanTiles;
+export default CompanyTiles;

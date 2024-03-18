@@ -13,7 +13,7 @@ import {
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { render, screen, waitFor } from "@testing-library/react";
-import { App } from "./App";
+import { StockPage } from "./StockPage";
 
 // This is a workaround for the error "ResizeObserver is not defined"
 // Found a solution on https://github.com/ZeeCoder/use-resize-observer/issues/40#issuecomment-1521748205
@@ -85,9 +85,9 @@ beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-describe("App", () => {
+describe("StockPage", () => {
   it("renders company tiles from API response", async () => {
-    render(<App />);
+    render(<StockPage />);
 
     await waitFor(() => {
       expect(screen.getByTestId("company-tiles")).toBeDefined();

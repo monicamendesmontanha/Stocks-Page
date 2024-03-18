@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import Dropdown from "./Dropdown";
-import countryOptions from "./countryOptions";
+import Dropdown from "./Dropdown/Dropdown";
+import countryOptions from "./CompanyTiles/countryOptions";
 import sortingCriteriaOptions from "./sortingCriteriaOptions";
-import CompanTiles, { Company } from "./CompanyTiles";
+import CompanyTiles, { Company } from "./CompanyTiles/CompanyTiles";
 
 type APIData = {
   id: number;
@@ -27,7 +27,7 @@ type APIData = {
   };
 };
 
-export function App() {
+export function StockPage() {
   const [selectedCountryId, setSelectedCountryId] = useState<string>("au");
   const [selectedSortingCriteria, setSelectedSortingCriteria] =
     useState<string>("desc");
@@ -117,7 +117,6 @@ export function App() {
     fetch("https://simplywall.st/api/grid/filter?include=grid,score", options)
       .then((response) => response.json())
       .then((jsonResponse) => {
-        console.log(jsonResponse);
 
         const companiesFromResponse: Company[] = jsonResponse.data.map(
           (d: APIData) => {
@@ -168,7 +167,7 @@ export function App() {
           onValueChange={handleSelectSortingCriteria}
         />
       </section>
-      <CompanTiles companies={companies} countryId={selectedCountryId} />
+      <CompanyTiles companies={companies} countryId={selectedCountryId} />
     </>
   );
 }

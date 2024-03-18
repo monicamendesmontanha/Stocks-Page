@@ -1,4 +1,4 @@
-import { Option } from "./Dropdown";
+import { Option } from "../Dropdown/Dropdown";
 
 const options: Option[] = [
   {
