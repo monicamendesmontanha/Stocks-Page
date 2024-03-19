@@ -3,31 +3,9 @@ import Dropdown from "./Dropdown/Dropdown";
 import countryOptions from "./CompanyTiles/countryOptions";
 import sortingCriteriaOptions from "./sortingCriteriaOptions";
 import CompanyTiles, { Company } from "./CompanyTiles/CompanyTiles";
+import { APIResponse, APIData, fetchData } from "./apidata";
 
-type APIData = {
-  id: number;
-  name: string;
-  ticker_symbol: string;
-  score: {
-    data: {
-      value: number;
-      income: number;
-      health: number;
-      past: number;
-      future: number;
-    };
-  };
-  grid: {
-    data: {
-      market_cap: number;
-      currency_info: {
-        primary_trading_item_currency_symbol: string;
-      };
-    };
-  };
-};
-
-const SIZE = 100;
+const SIZE = 10;
 const INITIAL_COUNTRY_ID = "au";
 const INITIAL_SORTING_CRITERIA = "desc";
 const INITIAL_TOTAL_RECORDS = 0;
@@ -44,7 +22,7 @@ export const StockPage: React.FC = () => {
   const [totalRecords, setTotalRecords] = useState<number>(
     INITIAL_TOTAL_RECORDS
   );
-  const [offset, setOffset] = useState<number>(INITIAL_OFFSET);
+  const [currentOffset, setCurrentOffset] = useState<number>(INITIAL_OFFSET);
   const [numberOfPages, setNumberOfPages] = useState<number>(
     INITIAL_NUMBER_OF_PAGES
   );
@@ -53,7 +31,7 @@ export const StockPage: React.FC = () => {
 
   const handleScroll = () => {
     if (
-      window.innerHeight + document.documentElement.scrollTop !==
+      window.innerHeight + document.documentElement.scrollTop ===
         document.documentElement.offsetHeight ||
       isLoading
     ) {
@@ -66,7 +44,8 @@ export const StockPage: React.FC = () => {
     }
 
     setCurrentPage(nextPage);
-    setOffset(nextPage * SIZE - SIZE);
+    const nextOffset = nextPage * SIZE - SIZE;
+    setCurrentOffset(nextOffset);
   };
 
   const resetData = () => {
@@ -74,7 +53,8 @@ export const StockPage: React.FC = () => {
     setTotalRecords(INITIAL_TOTAL_RECORDS);
     setNumberOfPages(INITIAL_NUMBER_OF_PAGES);
     setCurrentPage(INITIAL_CURRENT_PAGE);
-    setOffset(INITIAL_OFFSET);
+    setCurrentOffset(INITIAL_OFFSET);
+    window.removeEventListener("scroll", handleScroll);
   };
 
   const handleSelectCountry = (value: string) => {
@@ -87,77 +67,58 @@ export const StockPage: React.FC = () => {
     resetData();
   };
 
+  const loadStocks = async () => {
+    setIsLoading(true);
+    const jsonResponse: APIResponse = await fetchData({
+      countryId: selectedCountryId,
+      sortingCriteria: selectedSortingCriteria,
+      offset: currentOffset,
+      size: SIZE,
+    });
+    setTotalRecords(jsonResponse.meta.total_records);
+    setNumberOfPages(Math.ceil(jsonResponse.meta.total_records / SIZE));
+    const companiesFromResponse: Company[] = jsonResponse.data.map(
+      (d: APIData) => {
+        return {
+          id: d.id,
+          name: d.name,
+          tickerSymbol: d.ticker_symbol,
+          marketCap: d.grid.data.market_cap,
+          marketCapCurrencySymbol:
+            d.grid.data.currency_info.primary_trading_item_currency_symbol,
+          snowFlakeScore: {
+            value: d.score.data.value,
+            income: d.score.data.income,
+            health: d.score.data.health,
+            past: d.score.data.past,
+            future: d.score.data.future,
+          },
+        };
+      }
+    );
+    console.debug(
+      JSON.stringify({
+        offset: currentOffset,
+        countryId: selectedCountryId,
+        sortingCriteria: selectedSortingCriteria
+      })
+    );
+    setCompanies([...companies, ...companiesFromResponse]);
+    setIsLoading(false);
+  };
+
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isLoading]);
 
   useEffect(() => {
-    setIsLoading(true);
+    if (isLoading) {
+      return;
+    }
 
-    const countryFilter =
-      selectedCountryId === "global"
-        ? null
-        : [["country_name", "in", [selectedCountryId]]];
-
-    const payload = {
-      id: 1,
-      no_result_if_limit: false,
-      offset,
-      size: SIZE,
-      state: "read",
-      rules: JSON.stringify([
-        ["order_by", "market_cap", selectedSortingCriteria],
-        ["grid_visible_flag", "=", true],
-        ["market_cap", "is_not_null"],
-        ["primary_flag", "=", true],
-        ["is_fund", "=", false],
-        ["aor", countryFilter],
-      ]),
-    };
-
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        sws: "fe-challenge",
-      },
-      body: JSON.stringify(payload),
-    };
-
-    fetch("https://simplywall.st/api/grid/filter?include=grid,score", options)
-      .then((response) => response.json())
-      .then((jsonResponse) => {
-        const companiesFromResponse: Company[] = jsonResponse.data.map(
-          (d: APIData) => {
-            return {
-              id: d.id,
-              name: d.name,
-              tickerSymbol: d.ticker_symbol,
-              marketCap: d.grid.data.market_cap,
-              marketCapCurrencySymbol:
-                d.grid.data.currency_info.primary_trading_item_currency_symbol,
-              snowFlakeScore: {
-                value: d.score.data.value,
-                income: d.score.data.income,
-                health: d.score.data.health,
-                past: d.score.data.past,
-                future: d.score.data.future,
-              },
-            };
-          }
-        );
-
-        setCompanies([...companies, ...companiesFromResponse]);
-
-        const totalRecords = jsonResponse.meta.total_records;
-        setTotalRecords(totalRecords);
-        setNumberOfPages(Math.ceil(totalRecords / SIZE));
-
-        setIsLoading(false);
-      })
-      .catch((error) => console.log(error));
-  }, [offset, selectedCountryId, selectedSortingCriteria]);
+    loadStocks();
+  }, [currentOffset]);
 
   return (
     <>
