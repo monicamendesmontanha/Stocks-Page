@@ -96,13 +96,6 @@ export const StockPage: React.FC = () => {
         };
       }
     );
-    console.debug(
-      JSON.stringify({
-        offset: currentOffset,
-        countryId: selectedCountryId,
-        sortingCriteria: selectedSortingCriteria
-      })
-    );
     setCompanies([...companies, ...companiesFromResponse]);
     setIsLoading(false);
   };
